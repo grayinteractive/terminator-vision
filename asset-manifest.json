@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/terminator-vision/static/css/main.8fae33c9.chunk.css",
+    "main.js": "/terminator-vision/static/js/main.86961bcd.chunk.js",
+    "main.js.map": "/terminator-vision/static/js/main.86961bcd.chunk.js.map",
+    "runtime-main.js": "/terminator-vision/static/js/runtime-main.ec8cdc02.js",
+    "runtime-main.js.map": "/terminator-vision/static/js/runtime-main.ec8cdc02.js.map",
+    "static/js/2.ab5418bd.chunk.js": "/terminator-vision/static/js/2.ab5418bd.chunk.js",
+    "static/js/2.ab5418bd.chunk.js.map": "/terminator-vision/static/js/2.ab5418bd.chunk.js.map",
+    "index.html": "/terminator-vision/index.html",
+    "precache-manifest.25114ed538f169c7ae94789d695b86cd.js": "/terminator-vision/precache-manifest.25114ed538f169c7ae94789d695b86cd.js",
+    "service-worker.js": "/terminator-vision/service-worker.js",
+    "static/css/main.8fae33c9.chunk.css.map": "/terminator-vision/static/css/main.8fae33c9.chunk.css.map",
+    "static/media/App.scss": "/terminator-vision/static/media/Modern Vision.8f4647a7.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ec8cdc02.js",
+    "static/js/2.ab5418bd.chunk.js",
+    "static/css/main.8fae33c9.chunk.css",
+    "static/js/main.86961bcd.chunk.js"
+  ]
+}
