@@ -1,0 +1,271 @@
+.App {
+  text-align: center;
+  background-color: #222222;
+}
+
+canvas, video {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+video {
+  object-fit: cover;
+  filter: saturate(0) contrast(1.5) brightness(150%);
+  -webkit-filter: saturate(0) contrast(1.5) brightness(150%);
+}
+
+audio {
+  z-index: 10000000000000000;
+}
+
+.main-video {
+  z-index: -1;
+}
+
+.overlay-red {
+  background-color:rgba(255, 0, 0, 0.6);
+  z-index: 100;
+}
+
+.typed {
+  font-family: 'Arial',monospace,sans-serif;
+  color: #FFFFFF;
+  background: transparent;
+  position: absolute;
+  font-size: 1.5em;
+  line-height: 1em;
+  font-weight: 600;
+  text-align: left;
+  z-index: 200;
+}
+
+.system-status {
+  font-family: 'Modern Vision Regular';
+  color: #FFFFFF;
+  background: transparent;
+  position: absolute;
+  font-size: 4em;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+}
+
+#status span {
+  display: inline-block;
+}
+
+#cursor {
+  margin-left: .5em;
+}
+
+.blink {
+	-webkit-animation: blink .6s linear infinite;
+	-moz-animation: blink .6s linear infinite;
+	-ms-animation: blink .6s linear infinite;
+	-o-animation: blink .6s linear infinite;
+	 animation: blink .6s linear infinite;
+}
+
+.blink-fast {
+	-webkit-animation: blink .3s linear infinite;
+	-moz-animation: blink .3s linear infinite;
+	-ms-animation: blink .3s linear infinite;
+	-o-animation: blink .3s linear infinite;
+	 animation: blink .3s linear infinite;
+}
+
+@-webkit-keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
+}
+@-moz-keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
+}
+@-ms-keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
+}
+@-o-keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
+}
+@keyframes blink {
+	0% { opacity: 1; }
+	50% { opacity: 1; }
+	50.01% { opacity: 0; }
+	100% { opacity: 0; }
+}
+
+#typed1 {
+  top: 15%;
+  left: 5%;
+}
+
+#typed2 {
+  top: 15%;
+  right: 5%;
+  text-align: right;
+}
+
+#typed3 {
+  bottom: 15%;
+  right: 5%;
+  text-align: right;
+}
+
+#typedStatus {
+  font-family: 'Modern Vision Regular';
+  font-size: 4em;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.compass {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  left: 5%;
+  bottom: 10%;
+  z-index: 200;
+  animation: scaling 20s infinite;
+  -webkit-animation: scaling 20s infinite;
+  animation-delay: 10s;
+  opacity: 0;
+}
+
+@keyframes scaling {
+  0% {
+    -webkit-transform: scale(0);
+    opacity: 1;
+  }
+  2% {
+    -webkit-transform: scale(1);
+    opacity: 1;
+  }
+  6% {
+    -webkit-transform: scale(1);
+    opacity: 1;
+  }
+  8% {
+    -webkit-transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(0);
+    opacity: 0;
+  }
+}
+
+
+/* SCANLINES SETTINGS */
+
+    $scan-width: 2px;
+    $scan-crt: true;
+    $scan-fps: 60;
+    $scan-color: rgba(#000, .3);
+
+    // set z-index to 8 like in 8-bits, or 2147483648 or more to enable scanlines on Chrome fullscreen (doesn't work in Firefox or IE);
+    $scan-z-index: 2147483648; 
+
+    $scan-moving-line: true;
+    $scan-opacity: .75;
+
+/* MIXINS */
+
+    @mixin scan-crt($scan-crt) {
+        @if $scan-crt == true {
+            animation: scanlines 1s steps($scan-fps) infinite;
+        }
+        @else { animation: none; }
+    }
+
+    @mixin scan-moving($scan-moving-line) {
+        @if $scan-moving-line == true {
+            animation: scanline 6s linear infinite;
+        }
+        @else { animation: none; }
+    }
+
+    .scanlines {
+      width: 100%;
+      position: absolute;
+      overflow: hidden;
+      height: 100%;
+
+        &:before,
+        &:after {
+            display: block;
+            pointer-events: none;
+            content: '';
+            position: absolute;
+        }
+
+        // Unique scanline travelling on the screen
+        &:before {
+            // position: absolute;
+            // bottom: 100%;
+            width: 100%;
+            height: $scan-width * 1;
+            z-index: $scan-z-index + 1;
+            background: $scan-color;
+            opacity: $scan-opacity;
+            // animation: scanline 6s linear infinite;
+            @include scan-moving($scan-moving-line);
+        }
+
+        &:after {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: $scan-z-index;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                $scan-color 51%
+            );
+            background-size: 100% $scan-width*2;
+            @include scan-crt($scan-crt);
+        }  
+    }
+
+/* Animate unique scanline */
+    @keyframes scanline {
+        0% {
+            transform: translate3d(0,200000%,0);
+        }
+    }
+
+    @keyframes scanlines {
+        0% {
+            background-position: 0 50%;
+        }
+    }
+
+
+
+@font-face {
+  font-family: 'Modern Vision Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Modern Vision Regular'), url('fonts/Modern Vision.woff') format('woff');
+}
+
