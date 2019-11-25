@@ -17,8 +17,8 @@ canvas {
 
 video {
   object-fit: cover;
-  filter: saturate(0) contrast(1.5) brightness(150%);
-  -webkit-filter: saturate(0) contrast(1.5) brightness(150%);
+  filter: saturate(0) contrast(1.5) brightness(120%);
+  -webkit-filter: saturate(0) contrast(1.5) brightness(120%);
 }
 
 audio {
@@ -46,6 +46,16 @@ audio {
   z-index: 200;
 }
 
+.typed-cursor {
+  opacity: 1;
+  color: #FFFFFF;
+  font-size: 4em;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+}
+
 .system-status {
   font-family: 'Modern Vision Regular';
   color: #FFFFFF;
@@ -58,12 +68,8 @@ audio {
   z-index: 200;
 }
 
-#status span {
+#systemStatus {
   display: inline-block;
-}
-
-#cursor {
-  margin-left: .5em;
 }
 
 .blink {

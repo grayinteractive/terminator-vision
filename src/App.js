@@ -12,7 +12,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      systemStatus: "CONNECTING",
       personDetected: false,
       elapsedTime: 0
     };
@@ -23,6 +22,8 @@ class App extends React.Component {
 
   startDate = moment();
   duration = moment.duration(moment().diff(this.startDate));
+
+  // Technobabble strings
 
   strings1 = [
     "CYBERDYNE SYSTEMS <br> SERIES 800 MODEL 101 <br> VERSION 2.4",
@@ -46,10 +47,21 @@ class App extends React.Component {
     "CRITERIA <br> ************ <br> HGHT  626 <br> WGHT  291 <br> NECK  554 <br> SHLD  326 <br> BACK  514 <br> INSM  321 <br> SLEV  062 <br> CHST  619 <br> COLR  180 <br> BICP  213 <br> QUAD  545 <br> THGH  505",
     "FIT PROBABILITY 0.99 <br><br> RESET TO ACQUISITION <br> MODE SPEECH LEVEL 100 <br><br> PRIORITY OVERRIDE"
   ];
-  strings5 = ["CONNECTING", "DIAGNOSTIC", "THREAT ASSESSMENT", "ANALYSIS"];
+
+  // Typed status options
+  options = {
+    strings: ["CONNECTING","DIAGNOSTIC"],
+    typeSpeed: 10,
+    backSpeed: 0,
+    fadeOut: true,
+    backDelay: 3000,
+    loop: false,
+    showCursor: false,
+    cursorChar: "█"
+  };
 
   detectFromVideoFrame = (model, video) => {
-    // Added delay for smoother HUD text display
+    // Added 1-second delay for smoother HUD text display
     setTimeout(
       () =>
         model.detect(video).then(
@@ -82,7 +94,6 @@ class App extends React.Component {
       const width = prediction.bbox[2];
       const height = prediction.bbox[3];
 
-      // Draw the text last to ensure it's on top.
       ctx.fillStyle = "#FFFFFF";
       ctx.fillText("VISUAL:", x + width, y + height);
       ctx.fillText(prediction.class.toUpperCase(), x + width, y + height + 24);
@@ -102,22 +113,19 @@ class App extends React.Component {
         prediction.class === "sword" ||
         prediction.class === "gun"
       ) {
-        this.setState({
-          systemStatus: "Threat Assessment"
-        });
-      } else {
-        this.setState({
-          systemStatus: ""
-        });
+        this.typedStatus = new Typed("#typedStatus", this.options);
+        this.typedStatus.strings = ["THREAT ASSESSMENT"];
       }
 
       // Person Detection
       if (prediction.class === "person") {
+        if (this.typedStatus.strings[0] !== "ANALYSIS") {
+          this.typedStatus = new Typed("#typedStatus", this.options);
+          this.typedStatus.strings = ["ANALYSIS"];
+        }
         this.setState({
           personDetected: true
         });
-      }
-      if (this.state.personDetected === true) {
         this.typed2.strings = this.strings4;
       }
     });
@@ -131,18 +139,11 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    this.typedStatus = new Typed("#typedStatus", {
-      strings: this.strings5,
-      typeSpeed: 0,
-      backSpeed: 0,
-      showCursor: true,
-      fadeOut: true,
-      backDelay: 3000,
-      loop: false
-    });
+    this.typedStatus = new Typed("#typedStatus", this.options);
+    this.typedStatus.strings = ["CONNECTING"];
 
     if (navigator.mediaDevices.getUserMedia) {
-      // define a Promise that'll be used to load the webcam and read its frames
+      // Load the webcam and read frames
       const webcamPromise = navigator.mediaDevices
         .getUserMedia({
           video: true,
@@ -154,9 +155,8 @@ class App extends React.Component {
             window.stream = stream;
             this.video.current.srcObject = stream;
 
-            
-    const audioEl = document.getElementsByClassName("audio-element")[0]
-    audioEl.play();
+            const audioEl = document.getElementsByClassName("audio-element")[0];
+            audioEl.play();
 
             this.setState({
               systemStatus: "",
@@ -199,8 +199,6 @@ class App extends React.Component {
               backDelay: 3000,
               loop: true
             });
-
-            this.typedStatus.destroy();
 
             return new Promise(resolve => {
               this.video.current.onloadedmetadata = () => {
@@ -279,11 +277,6 @@ class App extends React.Component {
           <div id="typed2" className="typed" />
           <div id="typed3" className="typed" />
           <div id="typedStatus" className="typed blink" />
-          <div id="status" className="system-status">
-            <span id="cursor" className="blink-fast">
-              {this.state.systemStatus !== "" ? "█" : null}
-            </span>
-          </div>
           <img className="compass" src="images/Compass.svg" alt="Compass" />
           <video
             className="main-video"
@@ -294,8 +287,11 @@ class App extends React.Component {
             height="100%"
           />
           <canvas id="canvas" className="overlay-red" />
-          <audio className="audio-element">
-            <source src="audio/t800-sfx.mp3"></source>
+          <audio className="audio-element" volume="0.5">
+            <source
+              src="https://brandonagray.github.io/terminator-vision/audio/t800-sfx.mp3"
+              type="audio/mpeg"
+            ></source>
           </audio>
         </div>
       </div>
