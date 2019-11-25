@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b0a12bea6372c257d85b6a2c7bfb1ba9",
+    "revision": "35afb0434f571202b48e214f17f71df6",
     "url": "/terminator-vision/index.html"
   },
   {
-    "revision": "32d01648b0c17469e118",
-    "url": "/terminator-vision/static/css/main.aaf3b000.chunk.css"
+    "revision": "b8626c79b185b97469ec",
+    "url": "/terminator-vision/static/css/main.4e6d1bae.chunk.css"
   },
   {
     "revision": "37477f392fa3e8240df8",
     "url": "/terminator-vision/static/js/2.640aa538.chunk.js"
   },
   {
-    "revision": "32d01648b0c17469e118",
-    "url": "/terminator-vision/static/js/main.90287eba.chunk.js"
+    "revision": "b8626c79b185b97469ec",
+    "url": "/terminator-vision/static/js/main.0c363237.chunk.js"
   },
   {
     "revision": "b5aecde27e1655214b8b",

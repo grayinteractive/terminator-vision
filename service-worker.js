@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/terminator-vision/precache-manifest.82580899d639da437ef4d92372a3f043.js"
+  "/terminator-vision/precache-manifest.5223e56c0efdecd9da483fbdb52f4a6c.js"
 );
 
 self.addEventListener('message', (event) => {
