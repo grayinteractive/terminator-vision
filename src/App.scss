@@ -68,10 +68,6 @@ audio {
   z-index: 200;
 }
 
-#systemStatus {
-  display: inline-block;
-}
-
 .blink {
 	-webkit-animation: blink .6s linear infinite;
 	-moz-animation: blink .6s linear infinite;
@@ -139,7 +135,7 @@ audio {
 #typedStatus {
   font-family: 'Modern Vision Regular';
   font-size: 4em;
-  bottom: 10%;
+  bottom: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -266,12 +262,25 @@ audio {
         }
     }
 
-
-
 @font-face {
   font-family: 'Modern Vision Regular';
   font-style: normal;
   font-weight: normal;
   src: local('Modern Vision Regular'), url('fonts/Modern Vision.woff') format('woff');
 }
+
+
+
+@media all and (max-width: 768px) {
+
+};
+
+@media all and (max-width: 480px) {
+  .typed {
+    font-size: 1em;
+  }
+  #typedStatus {
+    font-size: 3em;
+  }
+};
 

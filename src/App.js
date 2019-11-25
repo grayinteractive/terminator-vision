@@ -119,10 +119,9 @@ class App extends React.Component {
 
       // Person Detection
       if (prediction.class === "person") {
-        if (this.typedStatus.strings[0] !== "ANALYSIS") {
-          this.typedStatus = new Typed("#typedStatus", this.options);
-          this.typedStatus.strings = ["ANALYSIS"];
-        }
+        this.typedStatus = new Typed("#typedStatus", this.options);
+        this.typedStatus.strings = ["ANALYSIS"];
+ 
         this.setState({
           personDetected: true
         });
@@ -134,6 +133,8 @@ class App extends React.Component {
       this.setState({
         personDetected: false
       });
+      this.typedStatus = new Typed("#typedStatus", this.options);
+      this.typedStatus.strings = [];
       this.typed2.strings = this.strings2;
     }
   };
@@ -142,8 +143,11 @@ class App extends React.Component {
     this.typedStatus = new Typed("#typedStatus", this.options);
     this.typedStatus.strings = ["CONNECTING"];
 
+    this.scaleCanvas();
+    window.addEventListener("resize", this.scaleCanvas.bind(this));
+
     if (navigator.mediaDevices.getUserMedia) {
-      // Load the webcam and read frames
+      // Load the webcam, read frames
       const webcamPromise = navigator.mediaDevices
         .getUserMedia({
           video: true,
@@ -151,7 +155,6 @@ class App extends React.Component {
         })
         .then(
           stream => {
-            window.addEventListener("resize", this.scaleCanvas());
             window.stream = stream;
             this.video.current.srcObject = stream;
 
@@ -212,10 +215,10 @@ class App extends React.Component {
           }
         );
 
-      // define a Promise that'll be used to load the model
       const loadModelPromise = cocoSsd.load();
 
-      // resolve all the Promises
+      // Resolve all Promises
+
       Promise.all([loadModelPromise, webcamPromise])
         .then(values => {
           this.detectFromVideoFrame(values[0], this.video.current);
@@ -236,33 +239,29 @@ class App extends React.Component {
     this.typed2.destroy();
     this.typed3.destroy();
     this.typedStatus.destroy();
+    window.removeEventListener("resize", this.scaleCanvas());
   }
 
+  // Get proper scale for canvas depending on screen size
   scaleCanvas() {
-    console.log("Scaling...");
     const container = document.querySelector("#container");
     const canvas = document.querySelector("#canvas");
 
-    // Get desired dimensions for canvas from container.
     let { width, height } = container.getBoundingClientRect();
 
-    // Get pixel ratio.
     const dpr = window.devicePixelRatio;
-
-    // Size the canvas a bit bigger than desired.
-    // Use exaggeration = 0 in real code.
+    console.log(dpr);
     const exaggeration = 20;
+
     width = Math.ceil(width * dpr + exaggeration);
     height = Math.ceil(height * dpr + exaggeration);
 
-    // Set the canvas resolution dimensions (integer values).
     canvas.width = width;
     canvas.height = height;
 
     canvas.style.width = `${width / dpr}px`;
     canvas.style.height = `${height / dpr}px`;
 
-    // Adjust canvas coordinates to use CSS pixel coordinates.
     const ctx = canvas.getContext("2d");
     ctx.scale(dpr, dpr);
 
