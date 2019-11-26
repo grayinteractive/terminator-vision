@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/terminator-vision/static/css/main.4cfb1433.chunk.css",
-    "main.js": "/terminator-vision/static/js/main.6d495cd3.chunk.js",
-    "main.js.map": "/terminator-vision/static/js/main.6d495cd3.chunk.js.map",
+    "main.js": "/terminator-vision/static/js/main.6198abed.chunk.js",
+    "main.js.map": "/terminator-vision/static/js/main.6198abed.chunk.js.map",
     "runtime-main.js": "/terminator-vision/static/js/runtime-main.ec8cdc02.js",
     "runtime-main.js.map": "/terminator-vision/static/js/runtime-main.ec8cdc02.js.map",
     "static/js/2.640aa538.chunk.js": "/terminator-vision/static/js/2.640aa538.chunk.js",
     "static/js/2.640aa538.chunk.js.map": "/terminator-vision/static/js/2.640aa538.chunk.js.map",
     "index.html": "/terminator-vision/index.html",
-    "precache-manifest.47c32271b0e22198f82c8c9cf1bcf1e6.js": "/terminator-vision/precache-manifest.47c32271b0e22198f82c8c9cf1bcf1e6.js",
+    "precache-manifest.1a2182fc126cf403f31b6b0c1cf8180d.js": "/terminator-vision/precache-manifest.1a2182fc126cf403f31b6b0c1cf8180d.js",
     "service-worker.js": "/terminator-vision/service-worker.js",
     "static/css/main.4cfb1433.chunk.css.map": "/terminator-vision/static/css/main.4cfb1433.chunk.css.map",
     "static/media/App.scss": "/terminator-vision/static/media/Modern Vision.8f4647a7.woff"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.ec8cdc02.js",
     "static/js/2.640aa538.chunk.js",
     "static/css/main.4cfb1433.chunk.css",
-    "static/js/main.6d495cd3.chunk.js"
+    "static/js/main.6198abed.chunk.js"
   ]
 }
