@@ -135,7 +135,7 @@ audio {
 #typedStatus {
   font-family: 'Modern Vision Regular';
   font-size: 4em;
-  bottom: 20%;
+  bottom: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -281,6 +281,7 @@ audio {
   }
   #typedStatus {
     font-size: 3em;
+    margin-bottom: 20%;
   }
 };
 

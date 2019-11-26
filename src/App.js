@@ -12,10 +12,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      personDetected: false,
       elapsedTime: 0
     };
   }
+
+  pastPredictions = [];
 
   video = React.createRef();
   canvas = React.createRef();
@@ -50,7 +51,7 @@ class App extends React.Component {
 
   // Typed status options
   options = {
-    strings: ["CONNECTING","DIAGNOSTIC"],
+    strings: ["CONNECTING", "DIAGNOSTIC"],
     typeSpeed: 10,
     backSpeed: 0,
     fadeOut: true,
@@ -59,6 +60,8 @@ class App extends React.Component {
     showCursor: false,
     cursorChar: "█"
   };
+
+  isSamePerson = false;
 
   detectFromVideoFrame = (model, video) => {
     // Added 1-second delay for smoother HUD text display
@@ -103,51 +106,78 @@ class App extends React.Component {
         y + height + 48
       );
 
+      // Keep small history of past predictions
+      this.pastPredictions.push(prediction);
+      if (this.pastPredictions.length > 3) {
+        this.pastPredictions.splice(0, 1);
+      }
+
       /*  Specialized HUD Info */
 
-      // 'Threat Detection'
+      // Threat Detection
       if (
         prediction.class === "knife" ||
         prediction.class === "baseball bat" ||
-        prediction.class === "scissors" ||
-        prediction.class === "sword" ||
-        prediction.class === "gun"
+        prediction.class === "scissors"
       ) {
         this.typedStatus = new Typed("#typedStatus", this.options);
         this.typedStatus.strings = ["THREAT ASSESSMENT"];
       }
 
       // Person Detection
-      if (prediction.class === "person") {
+      if ((prediction.class === "person") && !this.isSameObject) {
         this.typedStatus = new Typed("#typedStatus", this.options);
         this.typedStatus.strings = ["ANALYSIS"];
- 
-        this.setState({
-          personDetected: true
-        });
         this.typed2.strings = this.strings4;
+      }
+
+      if (this.pastPredictions.length >= 3) {
+        this.search("person", this.pastPredictions);
       }
     });
 
     if (predictions.length === 0) {
-      this.setState({
-        personDetected: false
-      });
-      this.typedStatus = new Typed("#typedStatus", this.options);
-      this.typedStatus.strings = [];
-      this.typed2.strings = this.strings2;
+      this.pastPredictions = [];
+      this.isSamePerson = false;
+      if(this.typedStatus) {
+        this.typedStatus.destroy();
+      }
+    }
+  };
+
+// Detect if same object has been in frame for at least 3 seconds - clear Status text if so
+  search = (key, array) => {
+    if (
+      array[0].class === key &&
+      array[1].class === key &&
+      array[2].class === key
+    ) {
+      if (
+        (array[0].bbox[0] + array[1].bbox[0] + array[2].bbox[0]) / 3 >=
+          array[0].bbox[0] - 10 &&
+        (array[0].bbox[0] + array[1].bbox[0] + array[2].bbox[0]) / 3 <=
+          array[0].bbox[0] + 10 &&
+        (array[0].bbox[1] + array[1].bbox[1] + array[2].bbox[1]) / 3 >=
+          array[0].bbox[1] - 10 &&
+        (array[0].bbox[1] + array[1].bbox[1] + array[2].bbox[1]) / 3 <=
+          array[0].bbox[1] + 10
+      ) {
+        this.isSameObject = true;
+        this.typedStatus.destroy();
+        this.typed2.strings = this.strings2;
+      }
+    } else {
+      this.isSameObject = false;
     }
   };
 
   componentDidMount() {
     this.typedStatus = new Typed("#typedStatus", this.options);
-    this.typedStatus.strings = ["CONNECTING"];
-
     this.scaleCanvas();
     window.addEventListener("resize", this.scaleCanvas.bind(this));
 
     if (navigator.mediaDevices.getUserMedia) {
-      // Load the webcam, read frames
+      // Load the webcam
       const webcamPromise = navigator.mediaDevices
         .getUserMedia({
           video: true,
@@ -158,6 +188,7 @@ class App extends React.Component {
             window.stream = stream;
             this.video.current.srcObject = stream;
 
+            // Play background sounds
             const audioEl = document.getElementsByClassName("audio-element")[0];
             audioEl.play();
 
@@ -168,8 +199,7 @@ class App extends React.Component {
                 .format("HH:mm:ss")
             });
 
-            // Normal HUD info
-
+            // Default HUD info
             this.typed1 = new Typed("#typed1", {
               strings: this.strings1,
               typeSpeed: 0,
@@ -216,8 +246,6 @@ class App extends React.Component {
         );
 
       const loadModelPromise = cocoSsd.load();
-
-      // Resolve all Promises
 
       Promise.all([loadModelPromise, webcamPromise])
         .then(values => {
