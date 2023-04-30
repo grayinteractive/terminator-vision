@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Typed from "typed.js";
 import "@tensorflow/tfjs";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
+import compassImage from './images/Compass.svg';
 
 import "./App.scss";
 
@@ -48,7 +49,7 @@ class App extends React.Component {
     "CRITERIA <br> ************ <br> HGHT  626 <br> WGHT  291 <br> NECK  554 <br> SHLD  326 <br> BACK  514 <br> INSM  321 <br> SLEV  062 <br> CHST  619 <br> COLR  180 <br> BICP  213 <br> QUAD  545 <br> THGH  505",
     "FIT PROBABILITY 0.99 <br><br> RESET TO ACQUISITION <br> MODE SPEECH LEVEL 100 <br><br> PRIORITY OVERRIDE"
   ];
-
+  
   // Typed status options
   options = {
     strings: ["CONNECTING", "DIAGNOSTIC"],
@@ -173,6 +174,41 @@ class App extends React.Component {
 
   componentDidMount() {
     this.typedStatus = new Typed("#typedStatus", this.options);
+
+    // Default HUD info
+    this.typed1 = new Typed("#typed1", {
+      strings: this.strings1,
+      typeSpeed: 0,
+      backSpeed: 0,
+      showCursor: false,
+      fadeOut: true,
+      startDelay: 1500,
+      backDelay: 3000,
+      loop: true,
+    });
+
+    this.typed2 = new Typed("#typed2", {
+      strings: this.strings2,
+      typeSpeed: 0,
+      backSpeed: 0,
+      showCursor: false,
+      fadeOut: true,
+      startDelay: 3000,
+      backDelay: 3000,
+      loop: true,
+    });
+
+    this.typed3 = new Typed("#typed3", {
+      strings: this.strings3,
+      typeSpeed: 0,
+      backSpeed: 0,
+      showCursor: false,
+      fadeOut: true,
+      startDelay: 5000,
+      backDelay: 3000,
+      loop: true,
+    });
+
     this.scaleCanvas();
     window.addEventListener("resize", this.scaleCanvas.bind(this));
 
@@ -181,10 +217,10 @@ class App extends React.Component {
       const webcamPromise = navigator.mediaDevices
         .getUserMedia({
           video: true,
-          audio: false
+          audio: false,
         })
         .then(
-          stream => {
+          (stream) => {
             window.stream = stream;
             this.video.current.srcObject = stream;
 
@@ -196,50 +232,16 @@ class App extends React.Component {
               systemStatus: "",
               elapsedTime: moment
                 .utc(this.duration.asMilliseconds())
-                .format("HH:mm:ss")
+                .format("HH:mm:ss"),
             });
 
-            // Default HUD info
-            this.typed1 = new Typed("#typed1", {
-              strings: this.strings1,
-              typeSpeed: 0,
-              backSpeed: 0,
-              showCursor: false,
-              fadeOut: true,
-              startDelay: 1500,
-              backDelay: 3000,
-              loop: true
-            });
-
-            this.typed2 = new Typed("#typed2", {
-              strings: this.strings2,
-              typeSpeed: 0,
-              backSpeed: 0,
-              showCursor: false,
-              fadeOut: true,
-              startDelay: 3000,
-              backDelay: 3000,
-              loop: true
-            });
-
-            this.typed3 = new Typed("#typed3", {
-              strings: this.strings3,
-              typeSpeed: 0,
-              backSpeed: 0,
-              showCursor: false,
-              fadeOut: true,
-              startDelay: 5000,
-              backDelay: 3000,
-              loop: true
-            });
-
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
               this.video.current.onloadedmetadata = () => {
                 resolve();
               };
             });
           },
-          error => {
+          (error) => {
             console.log("Couldn't start the webcam");
             console.error(error);
           }
@@ -248,25 +250,37 @@ class App extends React.Component {
       const loadModelPromise = cocoSsd.load();
 
       Promise.all([loadModelPromise, webcamPromise])
-        .then(values => {
+        .then((values) => {
           this.detectFromVideoFrame(values[0], this.video.current);
           this.setState({
             elapsedTime: moment
               .utc(this.duration.asMilliseconds())
-              .format("HH:mm:ss")
+              .format("HH:mm:ss"),
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     }
   }
 
   componentWillUnmount() {
-    this.typed1.destroy();
-    this.typed2.destroy();
-    this.typed3.destroy();
-    this.typedStatus.destroy();
+    // Clean up typed.js instances
+    try {
+      if (this.typed1) {
+        this.typed1.destroy();
+      }
+      if (this.typed2) {
+        this.typed2.destroy();
+      }
+      if (this.typed3) {
+        this.typed3.destroy();
+      }
+      if (this.typedStatus) {
+        this.typedStatus.destroy();
+      }
+    } catch (e) {}
+    // Remove resize listener
     window.removeEventListener("resize", this.scaleCanvas());
   }
 
@@ -304,7 +318,7 @@ class App extends React.Component {
           <div id="typed2" className="typed" />
           <div id="typed3" className="typed" />
           <div id="typedStatus" className="typed blink" />
-          <img className="compass" src="images/Compass.svg" alt="Compass" />
+          <img className="compass" src={compassImage} alt="Compass" />
           <video
             className="main-video"
             autoPlay
