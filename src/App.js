@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import Typed from "typed.js";
 import "@tensorflow/tfjs";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
@@ -35,7 +34,7 @@ class App extends React.Component {
   ];
   strings2 = [
     "DISCONTINUITY <br> CHRONO 543-665 <br><br> ELAPSED TIME <br> MARK " +
-      "00:00:00",
+    "00:00:00",
     "AUTO SET LINE <br> MODE 5892 TCB",
     "ADDRESS <br> CHECKSUM <br> VERIFIED <br><br> 45 97543 654 <br> 12 98845 766 <br> 28 23368 336 <br> 35 43645 <br> 31 41592"
   ];
@@ -49,7 +48,7 @@ class App extends React.Component {
     "CRITERIA <br> ************ <br> HGHT  626 <br> WGHT  291 <br> NECK  554 <br> SHLD  326 <br> BACK  514 <br> INSM  321 <br> SLEV  062 <br> CHST  619 <br> COLR  180 <br> BICP  213 <br> QUAD  545 <br> THGH  505",
     "FIT PROBABILITY 0.99 <br><br> RESET TO ACQUISITION <br> MODE SPEECH LEVEL 100 <br><br> PRIORITY OVERRIDE"
   ];
-  
+
   // Typed status options
   options = {
     strings: ["CONNECTING", "DIAGNOSTIC"],
@@ -65,24 +64,21 @@ class App extends React.Component {
   isSamePerson = false;
 
   detectFromVideoFrame = (model, video) => {
-    // Added 1-second delay for smoother HUD text display
-    setTimeout(
-      () =>
-        model.detect(video).then(
-          predictions => {
-            this.showDetections(predictions);
-
-            requestAnimationFrame(() => {
-              this.detectFromVideoFrame(model, video);
-            });
-          },
-          error => {
-            console.log("Couldn't start the webcam");
-            console.error(error);
-          }
-        ),
-      1000
+    model.detect(video).then(
+      (predictions) => {
+        this.showDetections(predictions);
+      },
+      (error) => {
+        console.log("Couldn't start the webcam!");
+        console.error(error);
+      }
     );
+
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        this.detectFromVideoFrame(model, video);
+      });
+    }, 1000);
   };
 
   showDetections = predictions => {
@@ -102,7 +98,7 @@ class App extends React.Component {
       ctx.fillText("VISUAL:", x + width, y + height);
       ctx.fillText(prediction.class.toUpperCase(), x + width, y + height + 24);
       ctx.fillText(
-        prediction.score.toFixed(2) + " MATCH",
+        (prediction.score.toFixed(2) * 100) + "% MATCH",
         x + width,
         y + height + 48
       );
@@ -119,7 +115,8 @@ class App extends React.Component {
       if (
         prediction.class === "knife" ||
         prediction.class === "baseball bat" ||
-        prediction.class === "scissors"
+        prediction.class === "scissors" ||
+        prediction.class === "gun"
       ) {
         this.typedStatus = new Typed("#typedStatus", this.options);
         this.typedStatus.strings = ["THREAT ASSESSMENT"];
@@ -140,13 +137,13 @@ class App extends React.Component {
     if (predictions.length === 0) {
       this.pastPredictions = [];
       this.isSamePerson = false;
-      if(this.typedStatus) {
+      if (this.typedStatus) {
         this.typedStatus.destroy();
       }
     }
   };
 
-// Detect if same object has been in frame for at least 3 seconds - clear Status text if so
+  // Detect if same object has been in frame for at least 3 seconds - clear Status text if so
   search = (key, array) => {
     if (
       array[0].class === key &&
@@ -155,13 +152,13 @@ class App extends React.Component {
     ) {
       if (
         (array[0].bbox[0] + array[1].bbox[0] + array[2].bbox[0]) / 3 >=
-          array[0].bbox[0] - 10 &&
+        array[0].bbox[0] - 10 &&
         (array[0].bbox[0] + array[1].bbox[0] + array[2].bbox[0]) / 3 <=
-          array[0].bbox[0] + 10 &&
+        array[0].bbox[0] + 10 &&
         (array[0].bbox[1] + array[1].bbox[1] + array[2].bbox[1]) / 3 >=
-          array[0].bbox[1] - 10 &&
+        array[0].bbox[1] - 10 &&
         (array[0].bbox[1] + array[1].bbox[1] + array[2].bbox[1]) / 3 <=
-          array[0].bbox[1] + 10
+        array[0].bbox[1] + 10
       ) {
         this.isSameObject = true;
         this.typedStatus.destroy();
@@ -210,9 +207,11 @@ class App extends React.Component {
     });
 
     this.scaleCanvas();
+
     window.addEventListener("resize", this.scaleCanvas.bind(this));
 
     if (navigator.mediaDevices.getUserMedia) {
+      console.log("User media:", navigator.mediaDevices.getUserMedia);
       // Load the webcam
       const webcamPromise = navigator.mediaDevices
         .getUserMedia({
@@ -224,9 +223,11 @@ class App extends React.Component {
             window.stream = stream;
             this.video.current.srcObject = stream;
 
+            console.log('Webcam stream set to the video element');
+
             // Play background sounds
-            const audioEl = document.getElementsByClassName("audio-element")[0];
-            audioEl.play();
+            // const audioEl = document.getElementsByClassName("audio-element")[0];
+            // audioEl.play();
 
             this.setState({
               systemStatus: "",
@@ -237,12 +238,13 @@ class App extends React.Component {
 
             return new Promise((resolve) => {
               this.video.current.onloadedmetadata = () => {
+                console.log('Loaded metadata!');
                 resolve();
               };
             });
           },
           (error) => {
-            console.log("Couldn't start the webcam");
+            console.log("Couldn't start the webcam", error);
             console.error(error);
           }
         );
@@ -279,7 +281,7 @@ class App extends React.Component {
       if (this.typedStatus) {
         this.typedStatus.destroy();
       }
-    } catch (e) {}
+    } catch (e) { }
     // Remove resize listener
     window.removeEventListener("resize", this.scaleCanvas());
   }
@@ -292,7 +294,6 @@ class App extends React.Component {
     let { width, height } = container.getBoundingClientRect();
 
     const dpr = window.devicePixelRatio;
-    console.log(dpr);
     const exaggeration = 20;
 
     width = Math.ceil(width * dpr + exaggeration);
@@ -309,6 +310,7 @@ class App extends React.Component {
 
     this.canvas = canvas;
   }
+
 
   render() {
     return (
@@ -327,7 +329,7 @@ class App extends React.Component {
             width="100%"
             height="100%"
           />
-          <canvas id="canvas" className="overlay-red" />
+          <canvas ref={(el) => (this.canvas = el)} id="canvas" className="overlay-red" />
           <audio className="audio-element" volume="0.5">
             <source
               src="https://brandonagray.github.io/terminator-vision/audio/t800-sfx.mp3"
@@ -339,8 +341,5 @@ class App extends React.Component {
     );
   }
 }
-
-const domContainer = document.querySelector("#root");
-ReactDOM.render(React.createElement(App), domContainer);
 
 export default App;

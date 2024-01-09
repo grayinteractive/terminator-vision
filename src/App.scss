@@ -18,20 +18,21 @@ canvas {
 video {
   object-fit: cover;
   filter: saturate(0) contrast(1.5) brightness(120%);
-  -webkit-filter: saturate(0) contrast(1.5) brightness(120%);
-}
-
-audio {
-  z-index: 10000000000000000;
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 .main-video {
-  z-index: -1;
+  position: absolute;
+  z-index: 0;
+  background-color: "black";
 }
 
 .overlay-red {
   background-color:rgba(255, 0, 0, 0.6);
-  z-index: 100;
+  position: absolute;
+  z-index: 2;
 }
 
 .typed {
